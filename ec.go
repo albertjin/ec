@@ -36,9 +36,22 @@ func Wrap(info string, err error) error {
     return NewNode(info, err, 2)
 }
 
+// Take the string argument as a format string to generate the info for Wrap().
+func Wrapf(format string, err error, a ...interface{}) error {
+    if err == nil {
+        return nil
+    }
+    return NewNode(fmt.Sprintf(format, a...), err, 2)
+}
+
 // NewError() as errors.NewError() with caller's location.
 func NewError(info string) error {
     return NewNode(info, nil, 2)
+}
+
+// Take the string argument as a format string to generate the info for NewError().
+func NewErrorf(format string, a ...interface{}) error {
+    return NewNode(fmt.Sprintf(format, a...), nil, 2)
 }
 
 // Implement error.Error().
