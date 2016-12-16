@@ -2,6 +2,7 @@
 package ec
 
 import (
+    "fmt"
     "runtime"
 )
 
@@ -26,9 +27,17 @@ func NewNode(info string, previous error, level int) Node {
     return &node{info, previous, file, line}
 }
 
-// implementation of error.Error()
+// Wrap error with info and stacked error(s).
+func Wrap(info string, err error) error {
+    if err != nil {
+        return NewNode(info, err, 2)
+    }
+    return nil
+}
+
+// Implement error.Error().
 func (e *node) Error() string {
-    return e.info + " (" + e.previous.Error() + ")"
+    return fmt.Sprintf("%v:%v: %v\n", e.file, e.line, e.info) + e.previous.Error()
 }
 
 func (e *node) Previous() error {
