@@ -15,43 +15,43 @@ type Node interface {
 }
 
 type node struct {
-    info string
     previous error
+    info string
     file string
     line int
     function *runtime.Func
 }
 
 // New error chain node.
-func NewNode(info string, previous error, level int) Node {
+func NewNode(err error, info string, level int) Node {
     pc, file, line, _ := runtime.Caller(level)
-    return &node{info, previous, file, line, runtime.FuncForPC(pc)}
+    return &node{err, info, file, line, runtime.FuncForPC(pc)}
 }
 
 // Wrap error with info and stacked error(s).
-func Wrap(info string, err error) error {
+func Wrap(err error, info string) error {
     if err == nil {
         return nil
     }
-    return NewNode(info, err, 2)
+    return NewNode(err, info, 2)
 }
 
 // Take the string argument as a format string to generate the info for Wrap().
-func Wrapf(format string, err error, a ...interface{}) error {
+func Wrapf(err error, format string, a ...interface{}) error {
     if err == nil {
         return nil
     }
-    return NewNode(fmt.Sprintf(format, a...), err, 2)
+    return NewNode(err, fmt.Sprintf(format, a...), 2)
 }
 
 // NewError() as errors.NewError() with caller's location.
 func NewError(info string) error {
-    return NewNode(info, nil, 2)
+    return NewNode(nil, info, 2)
 }
 
 // Take the string argument as a format string to generate the info for NewError().
 func NewErrorf(format string, a ...interface{}) error {
-    return NewNode(fmt.Sprintf(format, a...), nil, 2)
+    return NewNode(nil, fmt.Sprintf(format, a...), 2)
 }
 
 // Implement error.Error().
