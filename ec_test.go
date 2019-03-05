@@ -3,7 +3,7 @@ package ec_test
 import (
     "testing"
 
-    "albertjin/ec"
+    "github.com/albertjin/ec"
 )
 
 func TestWrap(t *testing.T) {
