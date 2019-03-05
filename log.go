@@ -26,7 +26,7 @@ func (t logText) HasErr() bool {
 
 func (t logText) Output(prefix string, w io.Writer) {
     if string(t) != "" {
-        w.Write([]byte(" "))
+        _, _ = w.Write([]byte(" "))
         logOutputText(prefix, string(t), w)
     }
 }
@@ -49,11 +49,11 @@ func (le logError) Output(prefix string, w io.Writer) {
 
             if linePrefix == nil {
                 linePrefix = []byte("\n" + prefix + "- ")
-                w.Write([]byte("- "))
+                _, _ = w.Write([]byte("- "))
             } else {
-                w.Write(linePrefix)
+                _, _ = w.Write(linePrefix)
             }
-            fmt.Fprintf(w, "[%v, %v, %v, %v()]", packageName, fileName, x.GetLine(), functionName)
+            _, _ = fmt.Fprintf(w, "[%v, %v, %v, %v()]", packageName, fileName, x.GetLine(), functionName)
 
             info, e = strings.TrimSpace(x.Info()), x.Previous()
 
@@ -64,9 +64,9 @@ func (le logError) Output(prefix string, w io.Writer) {
         if len(info) > 0 {
             if linePrefix == nil {
                 linePrefix = []byte("\n" + prefix + "- ")
-                w.Write([]byte("- "))
+                _, _ = w.Write([]byte("- "))
             } else {
-                w.Write(linePrefix)
+                _, _ = w.Write(linePrefix)
             }
             logOutputText(prefix, info, w)
         }
@@ -148,12 +148,12 @@ func (log *Log) Output(prefix string, w io.Writer) {
     case LogMap:
         for i, line := range log.lines {
             if i > 0 {
-                w.Write([]byte(p0))
+                _, _ = w.Write([]byte(p0))
             }
             if key := line.makeKey(); len(key) > 0 {
-                w.Write([]byte(key))
+                _, _ = w.Write([]byte(key))
             } else {
-                w.Write([]byte("'':"))
+                _, _ = w.Write([]byte("'':"))
             }
 
             switch x := line.line.(type) {
@@ -167,20 +167,20 @@ func (log *Log) Output(prefix string, w io.Writer) {
                 }
 
                 if len(x.lines) > 0 {
-                    w.Write(br)
-                    w.Write([]byte(a))
+                    _, _ = w.Write(br)
+                    _, _ = w.Write([]byte(a))
                     x.Output(a, w)
                 } else {
-                    w.Write([]byte(b))
+                    _, _ = w.Write([]byte(b))
                 }
             case logError:
-                w.Write(br)
-                w.Write([]byte(p0))
+                _, _ = w.Write(br)
+                _, _ = w.Write([]byte(p0))
                 x.Output(p0, w)
-                w.Write(br)
+                _, _ = w.Write(br)
             default:
                 x.Output(p0, w)
-                w.Write(br)
+                _, _ = w.Write(br)
             }
         }
     case LogList:
@@ -198,50 +198,50 @@ func (log *Log) Output(prefix string, w io.Writer) {
                 }
 
                 if i > 0 {
-                    w.Write([]byte(p0))
+                    _, _ = w.Write([]byte(p0))
                 }
-                w.Write([]byte("- "))
+                _, _ = w.Write([]byte("- "))
                 if len(key) > 0 {
-                    w.Write([]byte(key))
+                    _, _ = w.Write([]byte(key))
                     if len(x.lines) > 0 {
-                        w.Write(br)
-                        w.Write([]byte(a))
+                        _, _ = w.Write(br)
+                        _, _ = w.Write([]byte(a))
                         x.Output(a, w)
                     } else {
-                        w.Write([]byte(b))
+                        _, _ = w.Write([]byte(b))
                     }
                 } else {
                     if len(x.lines) > 0 {
                         x.Output(p2, w)
                     } else {
-                        w.Write([]byte(c))
+                        _, _ = w.Write([]byte(c))
                     }
                 }
             case logError:
                 if i > 0 {
-                    w.Write([]byte(p0))
+                    _, _ = w.Write([]byte(p0))
                 }
-                w.Write([]byte("- "))
+                _, _ = w.Write([]byte("- "))
                 if len(key) > 0 {
-                    w.Write([]byte(key))
-                    w.Write(br)
-                    w.Write([]byte(p2))
+                    _, _ = w.Write([]byte(key))
+                    _, _ = w.Write(br)
+                    _, _ = w.Write([]byte(p2))
                 }
                 x.Output(p2, w)
-                w.Write(br)
+                _, _ = w.Write(br)
             default:
                 if i > 0 {
-                    w.Write([]byte(p0))
+                    _, _ = w.Write([]byte(p0))
                 }
                 if len(key) > 0 {
-                    w.Write([]byte("- "))
-                    w.Write([]byte(key))
+                    _, _ = w.Write([]byte("- "))
+                    _, _ = w.Write([]byte(key))
                     x.Output(p2, w)
                 } else {
-                    w.Write([]byte("-"))
+                    _, _ = w.Write([]byte("-"))
                     x.Output(p0, w)
                 }
-                w.Write(br)
+                _, _ = w.Write(br)
             }
         }
     }
@@ -275,25 +275,25 @@ func logOutputText(prefix string, value string, w io.Writer) {
     if logReText.MatchString(value) {
         p := value
         if e := len(value) - 1; value[e] == '\n' {
-            w.Write([]byte("|2+\n"))
+            _, _ = w.Write([]byte("|2+\n"))
             p = value[:e]
         } else {
-            w.Write([]byte("|2-\n"))
+            _, _ = w.Write([]byte("|2-\n"))
         }
 
         for len(p) > 0 {
-            w.Write([]byte(prefix))
-            w.Write([]byte("  "))
+            _, _ = w.Write([]byte(prefix))
+            _, _ = w.Write([]byte("  "))
 
             j := strings.IndexRune(p, '\n') + 1
             if j == 0 {
-                w.Write([]byte(p))
+                _, _ = w.Write([]byte(p))
                 break
             }
-            w.Write([]byte(p[:j]))
+            _, _ = w.Write([]byte(p[:j]))
             p = p[j:]
         }
     } else {
-        w.Write([]byte(value))
+        _, _ = w.Write([]byte(value))
     }
 }

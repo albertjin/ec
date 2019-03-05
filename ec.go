@@ -89,11 +89,11 @@ func (e *node) dump(out *strings.Builder) *strings.Builder {
 func (e *node) print(out io.Writer) {
     fileName, packageName, functionName := e.GetName()
 
-    out.Write([]byte(fmt.Sprintf("[%v] %v:%v: %v()", packageName, fileName, e.line, functionName)))
+    _, _ = out.Write([]byte(fmt.Sprintf("[%v] %v:%v: %v()", packageName, fileName, e.line, functionName)))
     if len(e.info) > 0 {
         for _, s := range strings.Split(e.info, "\n") {
-            out.Write([]byte(prefixBlank))
-            out.Write([]byte(s))
+            _, _ = out.Write([]byte(prefixBlank))
+            _, _ = out.Write([]byte(s))
         }
     }
 
@@ -107,12 +107,12 @@ func (e *node) Dump(out io.Writer) {
     for err = e.previous; err != nil; {
         switch n := err.(type) {
         case *node:
-            out.Write([]byte("\n"))
+            _, _ = out.Write([]byte("\n"))
             n.print(out)
             err = n.previous
         default:
-            out.Write([]byte(prefixBlank))
-            out.Write([]byte(err.Error()))
+            _, _ = out.Write([]byte(prefixBlank))
+            _, _ = out.Write([]byte(err.Error()))
             return
         }
     }
