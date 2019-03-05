@@ -1,20 +1,18 @@
 package ec_test
 
 import (
-    "strings"
     "testing"
 
-    "github.com/albertjin/ec"
+    "albertjin/ec"
 )
 
 func TestWrap(t *testing.T) {
-    e0 := ec.NewError("the original error")
-    e1 := ec.Wrap("something wrong", e0)
+    e0 := ec.NewError("the original error\nbreak")
+    e1 := ec.Wrap(e0,"something wrong")
+    e2 := ec.Wrap(e1, "start")
 
-    // Note that e0 and e1 are called at line 11 and 12.
-    s := e1.Error()
-    if !strings.Contains(s, "github.com/albertjin/ec/ec_test.go:11: github.com/albertjin/ec_test.TestWrap()") ||
-        !strings.Contains(s, "github.com/albertjin/ec/ec_test.go:12: github.com/albertjin/ec_test.TestWrap()") {
-        t.Errorf("not expected:\n%v", s)
-    }
+    t.Log(e2.Error())
+
+    e3 := ec.Wrap(e2, "")
+    t.Log(e3.Error())
 }
