@@ -1,5 +1,5 @@
 // error chain
-package ec
+package ecl
 
 import (
     "fmt"
