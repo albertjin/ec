@@ -5,7 +5,6 @@ import (
     "testing"
 )
 
-
 func TestEscapeKey(t *testing.T) {
     s := "\\'\""
     t.Log(s)

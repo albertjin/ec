@@ -1,3 +1,3 @@
-module github.com/albertjin/ecl
+module github.com/albertjin/el
 
 go 1.12

@@ -1,3 +1,3 @@
-# ecl
+# el
 
-__ECL__ is as Error Chain and Logging for Go.
+__EL__ is as Error and Logging for Go.

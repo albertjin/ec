@@ -1,9 +1,9 @@
-package ecl
+package el
 
 import (
     "io"
 
-    "github.com/albertjin/ecl/internal/yaml"
+    "github.com/albertjin/el/internal/yaml"
 )
 
 type YamlKind int
