@@ -3,20 +3,19 @@ package yaml
 import "io"
 
 type line interface {
-    Output(prefix string, w io.Writer)
+    Output(context interface{}, prefix string, w io.Writer)
     HasErr() bool
 }
 
 type Line struct {
-    Format func(s string) string
-    Key    string
-    Line   line
+    Key  interface{}
+    Line line
 }
 
-func (l Line) MakeKey() string {
-    return MakeKey(l.Format, l.Key)
+func (l Line) MakeKey(context interface{}) string {
+    return MakeKey(context, l.Key)
 }
 
-func NewLine(format func(string) string, key string, value line) Line {
-    return Line{format, key, value}
+func NewLine(key interface{}, value line) Line {
+    return Line{key, value}
 }

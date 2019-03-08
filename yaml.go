@@ -28,28 +28,28 @@ func YamlLogList() *YamlLog {
     return &YamlLog{kind: YamlKindList}
 }
 
-func (l *YamlLog) KV(format func(string) string, key, value string) {
-    l.lines = append(l.lines, yaml.NewText(format, key, value))
+func (l *YamlLog) KV(key interface{}, value string) {
+    l.lines = append(l.lines, yaml.NewText(key, value))
 }
 
 func (l *YamlLog) V(value string) {
-    l.lines = append(l.lines, yaml.NewText(nil, "", value))
+    l.lines = append(l.lines, yaml.NewText(nil, value))
 }
 
-func (l *YamlLog) E(format func(string) string, key string, err error) {
-    l.lines = append(l.lines, yaml.NewError(format, key, err))
+func (l *YamlLog) E(key interface{}, err error) {
+    l.lines = append(l.lines, yaml.NewError(key, err))
     l.errCount++
 }
 
-func (l *YamlLog) PushMap(format func(string) string, key string) *YamlLog {
+func (l *YamlLog) PushMap(key interface{}) *YamlLog {
     n := &YamlLog{kind: YamlKindMap}
-    l.lines = append(l.lines, yaml.NewLine(format, key, n))
+    l.lines = append(l.lines, yaml.NewLine(key, n))
     return n
 }
 
-func (l *YamlLog) PushList(format func(string) string, key string) *YamlLog {
+func (l *YamlLog) PushList(key interface{}) *YamlLog {
     n := &YamlLog{kind: YamlKindList}
-    l.lines = append(l.lines, yaml.NewLine(format, key, n))
+    l.lines = append(l.lines, yaml.NewLine(key, n))
     return n
 }
 
@@ -66,7 +66,7 @@ func (l *YamlLog) HasErr() bool {
     return false
 }
 
-func (l *YamlLog) Output(prefix string, w io.Writer) {
+func (l *YamlLog) Output(context interface{}, prefix string, w io.Writer) {
     p0 := prefix
     p4 := p0 + "    "
     p2 := p4[:len(p0)+2]
@@ -78,7 +78,7 @@ func (l *YamlLog) Output(prefix string, w io.Writer) {
             if i > 0 {
                 _, _ = w.Write([]byte(p0))
             }
-            if key := line.MakeKey(); len(key) > 0 {
+            if key := line.MakeKey(context); len(key) > 0 {
                 _, _ = w.Write([]byte(key))
             } else {
                 _, _ = w.Write([]byte("'':"))
@@ -97,23 +97,23 @@ func (l *YamlLog) Output(prefix string, w io.Writer) {
                 if len(x.lines) > 0 {
                     _, _ = w.Write(br)
                     _, _ = w.Write([]byte(a))
-                    x.Output(a, w)
+                    x.Output(context, a, w)
                 } else {
                     _, _ = w.Write([]byte(b))
                 }
             case yaml.Error:
                 _, _ = w.Write(br)
                 _, _ = w.Write([]byte(p0))
-                x.Output(p0, w)
+                x.Output(context, p0, w)
                 _, _ = w.Write(br)
             default:
-                x.Output(p0, w)
+                x.Output(context, p0, w)
                 _, _ = w.Write(br)
             }
         }
     case YamlKindList:
         for i, line := range l.lines {
-            key := line.MakeKey()
+            key := line.MakeKey(context)
 
             switch x := line.Line.(type) {
             case *YamlLog:
@@ -134,13 +134,13 @@ func (l *YamlLog) Output(prefix string, w io.Writer) {
                     if len(x.lines) > 0 {
                         _, _ = w.Write(br)
                         _, _ = w.Write([]byte(a))
-                        x.Output(a, w)
+                        x.Output(context, a, w)
                     } else {
                         _, _ = w.Write([]byte(b))
                     }
                 } else {
                     if len(x.lines) > 0 {
-                        x.Output(p2, w)
+                        x.Output(context, p2, w)
                     } else {
                         _, _ = w.Write([]byte(c))
                     }
@@ -155,7 +155,7 @@ func (l *YamlLog) Output(prefix string, w io.Writer) {
                     _, _ = w.Write(br)
                     _, _ = w.Write([]byte(p2))
                 }
-                x.Output(p2, w)
+                x.Output(context, p2, w)
                 _, _ = w.Write(br)
             default:
                 if i > 0 {
@@ -164,10 +164,10 @@ func (l *YamlLog) Output(prefix string, w io.Writer) {
                 if len(key) > 0 {
                     _, _ = w.Write([]byte("- "))
                     _, _ = w.Write([]byte(key))
-                    x.Output(p2, w)
+                    x.Output(context, p2, w)
                 } else {
                     _, _ = w.Write([]byte("-"))
-                    x.Output(p0, w)
+                    x.Output(context, p0, w)
                 }
                 _, _ = w.Write(br)
             }

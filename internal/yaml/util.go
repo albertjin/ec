@@ -2,6 +2,7 @@ package yaml
 
 import (
     "encoding/json"
+    "fmt"
     "io"
     "regexp"
     "strings"
@@ -31,17 +32,34 @@ func EscapeKey(s string) string {
     return s
 }
 
-func MakeKey(format func(string) string, key string) string {
-    if len(key) == 0 {
-        return key
+func MakeKey(context interface{}, key interface{}) (text string) {
+    if key == nil {
+        return
     }
 
-    key = EscapeKey(key) + ":"
-    if format == nil {
-        return key
+    var format func(interface{}, string) string
+    switch t := key.(type) {
+    case string:
+        text = t
+    case interface {
+        String() string
+        Format() func(interface{}, string) string
+    }:
+        text = t.String()
+        format = t.Format()
+    case interface{ String() string }:
+        text = t.String()
+    default:
+        text = fmt.Sprintf("%v", key)
     }
 
-    return format(key)
+    if text != "" {
+        text = EscapeKey(text) + ":"
+        if format != nil {
+            text = format(context, text)
+        }
+    }
+    return
 }
 
 func OutputText(prefix string, value string, w io.Writer) {

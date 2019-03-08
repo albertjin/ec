@@ -21,7 +21,7 @@ type node interface {
     GetLine() (line int)
 }
 
-func (le Error) Output(prefix string, w io.Writer) {
+func (le Error) Output(context interface{}, prefix string, w io.Writer) {
     var linePrefix []byte
     for e := le.Err; e != nil; {
         var info string
@@ -53,6 +53,6 @@ func (le Error) Output(prefix string, w io.Writer) {
     }
 }
 
-func NewError(format func(string) string, key string, value error) Line {
-    return Line{format, key, Error{value}}
+func NewError(key interface{}, value error) Line {
+    return Line{key, Error{value}}
 }
