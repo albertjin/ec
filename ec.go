@@ -1,7 +1,8 @@
-// error chain
+// el: error logging
 package el
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"runtime"
@@ -26,7 +27,11 @@ func NewNode(err error, fn, info string, level int) error {
 // Wrap error with info and stacked error(s).
 func Wrap(err error, info string) error {
 	if err == nil {
-		return nil
+		if len(info) == 0 {
+			return nil
+		}
+		err = errors.New(info)
+		info = ""
 	}
 	return NewNode(err, "", info, 2)
 }
