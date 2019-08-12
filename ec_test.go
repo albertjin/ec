@@ -34,7 +34,7 @@ func TestWrap(t *testing.T) {
 	e3 := Wrap(e2, "")
 	t.Log("\n" + e3.Error())
 
-	t.Log("here", b())
+	t.Log("\n" + Wrap(ErrNil, "test").Error())
 }
 
 func TestWrapFn(t *testing.T) {
@@ -43,7 +43,6 @@ func TestWrapFn(t *testing.T) {
 	t.Log("\n" + x.Foo().Error())
 	t.Log("\n" + x.Bar().Error())
 	t.Log("\n" + (func() error {
-		return WrapFn(a(), "hello", nil)
+		return WrapFn(a(), "hello", "info")
 	}()).Error())
-
 }
