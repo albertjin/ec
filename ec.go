@@ -57,8 +57,8 @@ func Wrapf(err error, format string, a ...interface{}) error {
 }
 
 // Take the string argument as a format string to generate the info for WrapFn().
-func WrapFnf(fn, format string, a ...interface{}) error {
-	return newNode(nil, fn, fmt.Sprintf(format, a...), 2)
+func WrapFnf(err error, fn, format string, a ...interface{}) error {
+	return newNode(err, fn, fmt.Sprintf(format, a...), 2)
 }
 
 const prefixBlank = "\n  "
